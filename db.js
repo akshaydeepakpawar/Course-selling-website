@@ -2,7 +2,7 @@ const mongoose =require("mongoose")
 const Schema= mongoose.Schema;
 const ObjectId=Schema.Types.ObjectId;
 
-mongoose.connect("mongodb+srv://akshay:yepasshe@cluster0.th96dyz.mongodb.net/coursera-app");
+mongoose.connect("");
 
 const userSchema =new Schema({
     email:{type:String, unique:true},
