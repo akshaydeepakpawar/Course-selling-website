@@ -13,7 +13,9 @@ userRouter.post("/login",(req,res)=>{
 
 userRouter.get("/purcheses",(req,res)=>{
     
+
 })
+
 module.exports={
     userRouter:userRouter
 }
