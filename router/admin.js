@@ -1,6 +1,6 @@
 const {Router}=require("express")
 const adminRouter=Router();
-const {adminModel}=require("../db")
+const {adminModel, courseModel}=require("../db")
 const bcrypt=require("bcrypt");
 const {z} =require("zod")
 const jwt =require("jsonwebtoken")
@@ -87,13 +87,34 @@ adminRouter.post("/course",adminAuth,async(req,res)=>{
     })
 
 })
-adminRouter.put("/course",(req,res)=>{
+adminRouter.put("/course",adminAuth,async(req,res)=>{
+    const adminId=req.userId;
+    const {title,description,image,price,courseId} =req.body;
+    const course=await courseModel.updateOne({
+        _id: courseId,
+        creatorId:adminId
+    },
+        {
+        title,description,image,price
+    })
+    res.json({
+        message:"course updated",
+        courseId:course._id
+    })
+})
+adminRouter.get("/course/bulk",adminAuth,async(req,res)=>{
+    const adminId=req.userId;
+    const courses=await courseModel.find({
+        creatorId:adminId
+    })
+    
+    res.json({
+        message:"course updated",
+        courses
+    })
 
 })
 adminRouter.delete("/course",(req,res)=>{
-
-})
-adminRouter.get("/course/bulk",(req,res)=>{
 
 })
 
