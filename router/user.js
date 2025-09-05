@@ -4,7 +4,7 @@ const userRouter=Router();
 const bcrypt=require("bcrypt");
 const {z} =require("zod")
 const jwt =require("jsonwebtoken")
-const USER_SECRET_JWT="userpass";
+const {USER_SECRET_JWT}=require("../config")
 
 userRouter.post("/signup",async(req,res)=>{
      const requireBody=z.object({

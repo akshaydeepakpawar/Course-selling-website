@@ -4,7 +4,8 @@ const {adminModel}=require("../db")
 const bcrypt=require("bcrypt");
 const {z} =require("zod")
 const jwt =require("jsonwebtoken")
-const ADMIN_SECRET_JWT="adminpass";
+const {ADMIN_SECRET_JWT}=require("../config");
+const {adminAuth} = require("../middleware/admin")
 
 adminRouter.post("/signup",async(req,res)=>{
     
@@ -48,7 +49,6 @@ adminRouter.post("/signup",async(req,res)=>{
             message:"user already exist"
         })
     }
-
 })
 adminRouter.post("/login",async(req,res)=>{
     const {email,password}=req.body;
@@ -75,25 +75,16 @@ adminRouter.post("/login",async(req,res)=>{
     }
 })
 
-function Auth(req,res,next){
-    const token=req.headers['token'];
-    if(!token){
-        res.json({
-            error:"token is not provided"
-        })
-    }
-    try {
-        const decode=jwt.verify(token,SECRET_JWT);
-        req.userId=decode.id;
-        next()
-    } catch (error) {
-        res.status(401).json({
-            error:"invalid token"
-        })
-    }
-}
-
-adminRouter.post("/course",(req,res)=>{
+adminRouter.post("/course",adminAuth,async(req,res)=>{
+    const adminId=req.userId;
+    const {title,description,image,price} =req.body;
+    const course=await courseModel.create({
+        title,description,image,price,creatorId:adminId
+    })
+    res.json({
+        message:"course is created",
+        courseId:course._id
+    })
 
 })
 adminRouter.put("/course",(req,res)=>{
