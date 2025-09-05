@@ -63,7 +63,7 @@ adminRouter.post("/login",async(req,res)=>{
     const passwordMatch=await bcrypt.compare(password,user.password);
     if(passwordMatch)
     {
-        const token=jwt.sign({id:user._id},SECRET_JWT);
+        const token=jwt.sign({id:user._id},ADMIN_SECRET_JWT);
         res.json({
             token:token
         })
