@@ -11,8 +11,8 @@ adminRouter.post("/signup",async(req,res)=>{
     
     const requireBody=z.object({
         email:z.email(),
-        fisrtName:z.string().min(10).max(100),
-        lastName:z.string().min(10).max(100),
+        firstName:z.string().min(2).max(100),
+        lastName:z.string().min(2).max(100),
         password:z.string()
         .min(8, "Password must be at least 8 characters long").max(30,"maximum 30 characters only")
         .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
@@ -42,7 +42,7 @@ adminRouter.post("/signup",async(req,res)=>{
             lastName:lastName
         })
         res.json({
-            message: "you are logged in"
+            message: "you are signned up !"
         })
     } catch (error) {
         res.json({
@@ -66,6 +66,9 @@ adminRouter.post("/login",async(req,res)=>{
         const token=jwt.sign({id:user._id},ADMIN_SECRET_JWT);
         res.json({
             token:token
+        })
+        res.json({
+            message: "you are logged in"
         })
     }
     else{
@@ -109,13 +112,31 @@ adminRouter.get("/course/bulk",adminAuth,async(req,res)=>{
     })
     
     res.json({
-        message:"course updated",
+        message:"all course",
         courses
     })
 
 })
-adminRouter.delete("/course",(req,res)=>{
-
+adminRouter.delete("/course",adminAuth,async(req,res)=>{
+    try {
+        const creatorId=req.userId;
+        const courseId=req.body.courseId;
+        const course=await courseModel.findOneAndDelete({_id:courseId,creatorId:creatorId});
+        if(!course){
+            res.status(404).json({
+                message:"course not exists"
+            })
+        }
+        res.json({
+            message: "course is deleted",
+            coursename : course.title
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"something is went wrong !",
+            error:error.message
+        })
+    }
 })
 
 module.exports={
